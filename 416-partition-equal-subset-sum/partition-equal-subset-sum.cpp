@@ -1,23 +1,28 @@
 class Solution {
 public:
-    bool solve(int i,vector<int>&nums,int s1,vector<vector<int>> &dp,int s){
-        if(i==nums.size()){
-            return (s1==(s-s1));
-        }
-        if(dp[i][s1]!=-1){
-            return dp[i][s1];
-        }
-        bool addTos1=solve(i+1,nums,s1+nums[i],dp,s);
-        bool addTos2=solve(i+1,nums,s1,dp,s);
-        return dp[i][s1]=addTos1||addTos2;;
-    }
     bool canPartition(vector<int>& nums) {
         int n=nums.size();
         int s=0;
         for(int i=0;i<n;i++){
             s+=nums[i];
         }
-        vector<vector<int>>dp(n,vector<int>(s+1,-1));
-        return solve(0,nums,0,dp,s);
+        if(s%2==1)return false;
+        int target=s/2;
+        vector<vector<bool>>dp(n,vector<bool>(target+1,false));
+        for(int i=0;i<n;i++){
+            dp[i][0]=true;
+        }
+        if(nums[0]<=target)dp[0][nums[0]]=true;
+        for(int i=1;i<n;i++){
+            for(int s=1;s<=target;s++){
+                bool notPick=dp[i-1][s];
+                bool pick=false;
+                if(nums[i]<=s){
+                    pick=dp[i-1][s-nums[i]];
+                }
+                dp[i][s]=pick||notPick;
+            }
+        }
+        return dp[n-1][target];
     }
 };
