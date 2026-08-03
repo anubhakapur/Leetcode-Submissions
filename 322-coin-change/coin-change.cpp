@@ -1,22 +1,24 @@
 class Solution {
 public:
-    int solve(int i,vector<int>& coins, int amount,long long currSum,vector<vector<int>>&dp){
-        if(currSum==amount)return 0;
-        if(i>=coins.size() || currSum>amount)return INT_MAX;
-        if(dp[i][currSum]!=-1)return dp[i][currSum];
-        int take=INT_MAX;
-        if(currSum+coins[i]<=amount){
-            take=solve(i,coins,amount,currSum+coins[i],dp);
-        }
-        if(take!=INT_MAX)take++;
-        int skip=solve(i+1,coins,amount,currSum,dp);
-        return dp[i][currSum]=min(take,skip);
-    }
     int coinChange(vector<int>& coins, int amount) {
-        int minCoins=INT_MAX;
         int n=coins.size();
-        vector<vector<int>>dp(n+1,vector<int>(amount+1,-1));
-        minCoins=solve(0,coins,amount,0,dp);
-        return (minCoins==INT_MAX)?-1:minCoins;
+        vector<vector<int>>dp(n,vector<int>(amount+1,INT_MAX));
+
+        for(int i=0;i<n;i++)dp[i][0]=0;
+        for(int amt=0;amt<=amount;amt++){
+            if(amt%coins[0]==0){
+                dp[0][amt]=amt/coins[0];
+            }
+        }
+
+        for(int i=1;i<n;i++){
+            for(int amt=1;amt<=amount;amt++){
+                int skip=dp[i-1][amt];
+                int take = INT_MAX;
+                if (coins[i]<=amt && dp[i][amt-coins[i]] != INT_MAX)take=1+dp[i][amt-coins[i]];
+                dp[i][amt]=min(skip,take);
+            }
+        }
+        return (dp[n-1][amount]==INT_MAX)?-1:dp[n-1][amount];
     }
 };
