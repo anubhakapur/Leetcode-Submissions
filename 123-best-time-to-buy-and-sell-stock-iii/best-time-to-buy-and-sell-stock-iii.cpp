@@ -15,7 +15,18 @@ public:
     }
     int maxProfit(vector<int>& prices) {
         int n=prices.size();
-        vector<vector<vector<int>>>dp(n,vector<vector<int>>(3,vector<int>(2,-1))); //dp[n][cnt][holdingStock]
-        return solve(prices,0,0,0,dp);
+        vector<vector<vector<int>>>dp(n+1,vector<vector<int>>(3,vector<int>(2,0))); //dp[n][cnt][holdingStock]
+        for(int i=n-1;i>=0;i--){
+            for(int cnt=1;cnt>=0;cnt--){//c==2 mei sb 0 hai as per base case 
+                int buy=-prices[i]+dp[i+1][cnt][1];
+                int skipBuying=dp[i+1][cnt][0];
+                dp[i][cnt][0]=max(buy,skipBuying);
+
+                int sell=prices[i]+dp[i][cnt+1][0];
+                int skipSelling=dp[i+1][cnt][1];
+                dp[i][cnt][1]=max(sell,skipSelling);
+            }
+        }
+        return dp[0][0][0];//starting state is idx 0, cnt 0 and stock bhi nhi h
     }
 };
