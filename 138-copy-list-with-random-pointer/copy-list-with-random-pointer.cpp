@@ -17,23 +17,33 @@ public:
 class Solution {
 public:
     Node* copyRandomList(Node* head) {
-        unordered_map<Node*,Node*>nodes;
-        nodes[nullptr]=nullptr;
-        Node*temp=head;
-        while(temp){
-            if(nodes.find(temp)==nodes.end()){
-                nodes[temp]=new Node(temp->val);
-            }
-            if(nodes.find(temp->next)==nodes.end()){
-                nodes[temp->next]=new Node(temp->next->val);
-            }
-            if(nodes.find(temp->random)==nodes.end()){
-                nodes[temp->random]=new Node(temp->random->val);
-            }
-            nodes[temp]->next=nodes[temp->next];
-            nodes[temp]->random=nodes[temp->random];
-            temp=temp->next;
+        if(!head)return nullptr;
+        Node*l1=head;
+        while(l1){
+            Node* nn=new Node(l1->val);
+            nn->next=l1->next;
+            l1->next=nn;
+            l1=nn->next;
         }
-        return nodes[head];
+        l1=head;
+        Node*newHead=l1->next;
+        Node*l2=newHead;
+        while(l1){
+            if(l1->random)l2->random=l1->random->next;
+            if(l2->next){
+                l2=l2->next->next;
+            }
+            if(l1->next)l1=l1->next->next;
+        }
+        l2=newHead;
+        l1=head;
+        //have to restore both lists
+        while(l1){
+            l1->next=l2->next;
+            if(l2->next)l2->next=l2->next->next;
+            l1=l1->next;
+            l2=l2->next;
+        }
+        return newHead;
     }
 };
