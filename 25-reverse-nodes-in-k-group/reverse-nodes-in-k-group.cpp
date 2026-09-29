@@ -27,28 +27,19 @@ public:
         ListNode*prev=dummy;
         prev->next=head;
 
-        ListNode*start=head;
-        ListNode*end=head;
-        ListNode*nextNode=head->next;
         while(true){
-            int c=1;
-            while(c<k && end!=nullptr){
+            ListNode*end=prev;
+            for(int i=0;i<k;i++){
                 end=end->next;
-                c++;
+                if(end==nullptr)return dummy->next;
             }
-            if(end==nullptr || c<k)break;
-            nextNode=end->next;
+            ListNode*start=prev->next;
+            ListNode*nextNode=end->next;
             reverseLL(start,end);
-            //swap(ListNode*start,ListNode*end);
-            ListNode*temp=start;
-            start=end;
-            end=temp;
 
-            if(prev)prev->next=start;
-            end->next=nextNode;
-            prev=end;
-            end=end->next;
-            start=end;
+            prev->next=end;
+            start->next=nextNode;
+            prev=start;
         }
         return dummy->next;
     }
