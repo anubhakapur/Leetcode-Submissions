@@ -9,24 +9,25 @@
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+
 class Solution {
 public:
     vector<int> rightSideView(TreeNode* root) {
         if(!root)return {};
-        queue<pair<int,TreeNode*>>q;
-        map<int,int>mpp;
         vector<int>res;
-        q.push({0,root});
+        queue<TreeNode*>q;
+        q.push(root);
         while(!q.empty()){
-            int row=q.front().first;
-            TreeNode*currNode=q.front().second;
-            q.pop();
-            mpp[row]=currNode->val;
-            if(currNode->left)q.push({row+1,currNode->left});
-            if(currNode->right)q.push({row+1,currNode->right});
-        }
-        for(auto & it:mpp){
-            res.push_back(it.second);
+            int n=q.size();
+            TreeNode*rightMostNode=nullptr;
+            while(n--){
+                TreeNode*curr=q.front();
+                rightMostNode=curr;
+                q.pop();
+                if(curr->left)q.push(curr->left);
+                if(curr->right)q.push(curr->right);
+            }
+            res.push_back(rightMostNode->val);
         }
         return res;
     }
