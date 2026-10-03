@@ -11,24 +11,20 @@
  */
 class Solution {
 public:
-    TreeNode*solve(vector<int>& preorder, vector<int>& inorder,int s,int e,int &preIndex){
-        if(s>e)return nullptr;
-        int rootVal=preorder[preIndex++];
-        TreeNode* root=new TreeNode(rootVal);
-        int i=s;
-        for(;i<=e;i++){
-            if(inorder[i]==rootVal){
-                break;
-            }
-        }
-        root->left=solve(preorder,inorder,s,i-1,preIndex);
-        root->right=solve(preorder,inorder,i+1,e,preIndex);
+    TreeNode*solve(vector<int>& preorder, vector<int>& inorder,int &preIdx,int inStart,int inEnd, unordered_map<int,int>&indices){
+        if(inStart>inEnd)return nullptr;
+        TreeNode*root=new TreeNode(preorder[preIdx++]);
+        int idx=indices[root->val];
+        root->left=solve(preorder,inorder,preIdx,inStart,idx-1,indices);
+        root->right=solve(preorder,inorder,preIdx,idx+1,inEnd,indices);
         return root;
+
     }
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        TreeNode*root;
-        int preIndex=0;
-        root=solve(preorder,inorder,0,inorder.size()-1,preIndex);
-        return root;
+        int idx=0;
+        unordered_map<int,int>indices;
+        int n=inorder.size();
+        for(int i=0;i<n;i++)indices[inorder[i]]=i;
+        return solve(preorder,inorder,idx,0,inorder.size()-1,indices);
     }
 };
